@@ -1,4 +1,5 @@
 import ts from 'typescript';
+import { explainCall } from './explain-call.js';
 
 export function analyze(files) {
   const names = Object.keys(files).filter(p => /\.[cm]?[jt]sx?$/.test(p));
@@ -25,6 +26,16 @@ export function analyze(files) {
       if (isFunction(node) && node.body && functionName(node)) {
         const name = functionName(node), line = loc(sf, node), path = filePath(sf), id = `${path}:${line}:${name}`;
         const item = { id, name, path, line, endLine: sf.getLineAndCharacterOfPosition(node.end).line + 1, signature: node.getText(sf).split(/\s*\{/)[0].slice(0, 250), calls: [] };
+        item.parameters = node.parameters.map(p => p.getText(sf));
+        item.returns = []; item.branches = [];
+        const inspect = part => {
+          if (part !== node.body && ts.isFunctionLike(part)) return;
+          if (ts.isReturnStatement(part)) item.returns.push({expression: part.expression?.getText(sf) || '(no value)', line: loc(sf, part)});
+          if (ts.isIfStatement(part)) item.branches.push({expression: part.expression.getText(sf), line: loc(sf, part)});
+          ts.forEachChild(part, inspect);
+        };
+        if (ts.isBlock(node.body)) inspect(node.body);
+        else item.returns.push({expression: node.body.getText(sf), line: loc(sf, node.body)});
         nodeIds.set(node, id); functions.push(item);
       }
       ts.forEachChild(node, walk);
@@ -44,7 +55,8 @@ export function analyze(files) {
             const decls = sym?.declarations || [];
             let targets = decls.map(d => nodeIds.get(d) || nodeIds.get(d.initializer)).filter(Boolean);
             targets = [...new Set(targets)];
-            item.calls.push({name: expression.getText(sf), line: loc(sf, child), target: targets.length === 1 ? targets[0] : null});
+            const target = targets.length === 1 ? targets[0] : null;
+            item.calls.push({name: expression.getText(sf), line: loc(sf, child), target, ...explainCall(child, sf, checker, target)});
           }
           ts.forEachChild(child, visit);
         }; visit(node.body);
