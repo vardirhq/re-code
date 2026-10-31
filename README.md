@@ -18,3 +18,9 @@ Run `npm test` for the analysis tests and `npm run build` for a static build. Th
 Local files are read and analyzed in the browser; they are not executed or uploaded. GitHub imports fetch public source directly from GitHub. No GitHub authentication or private repositories are supported yet. GitHub imports are capped at the first 100 supported files, and files larger than 1 MB are skipped. GitHub API rate limits may apply. Folder selection availability depends on the browser. Files with syntax errors are reported and omitted from analysis.
 
 The explorer lists calls present in source, not a guaranteed runtime sequence. Resolution is limited to what TypeScript can establish from the imported source; dynamic calls, missing dependencies, aliases, and incomplete projects may remain unresolved. Text matches are clues, not verified connections to handlers. No AI is used.
+
+## Follow a behavior
+
+Search for a function name or words from a question, such as “How does importing a GitHub repository work?” Search suggestions are text-based clues, not an understanding of the question. Choose a starting function to see a bounded map of calls and source-backed highlights. Select an evidence item to inspect its source line, or open a connected function to continue exploring.
+
+The map shows calls found in source, not a runtime trace or a guaranteed sequence. Callback and conditional calls may not execute. It follows at most two levels and twelve functions, so it can omit relevant code; unresolved calls and truncation are reported. The GitHub URL descriptions recognize specific URL patterns and do not establish what a called helper does at runtime. Search clues outside indexed functions cannot currently be opened in the function viewer.
