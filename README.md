@@ -24,3 +24,7 @@ The explorer lists calls present in source, not a guaranteed runtime sequence. R
 Search for a function name or words from a question, such as “How does importing a GitHub repository work?” Search suggestions are text-based clues, not an understanding of the question. Choose a starting function to see a bounded map of calls and source-backed highlights. Select an evidence item to inspect its source line, or open a connected function to continue exploring.
 
 The map shows calls found in source, not a runtime trace or a guaranteed sequence. Callback and conditional calls may not execute. It follows at most two levels and twelve functions, so it can omit relevant code; unresolved calls and truncation are reported. The GitHub URL descriptions recognize specific URL patterns and do not establish what a called helper does at runtime. Search clues outside indexed functions cannot currently be opened in the function viewer.
+
+## Beginner view
+
+After opening a project, start with a question or choose a suggested part. Search is based on words in the source and does not understand the question. Some recognizable GitHub-import patterns have short, source-linked explanations; other results explicitly say that an explanation is not yet available. The technical explorer remains available under “Look at the code and connections.” No AI or external model is used.
